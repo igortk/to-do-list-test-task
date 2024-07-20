@@ -2,56 +2,36 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/goccy/go-json"
 	log "github.com/sirupsen/logrus"
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"io"
-	"net/http"
+	"to-do-list-test-task/config"
 	"to-do-list-test-task/dto"
+	"to-do-list-test-task/service/http/api"
 )
 
 func main() {
-	e := gin.Default()
-
-	e.POST("/tasks", HandlerCreateTask)
-
-	err := e.Run(":8888")
+	cfg, err := config.Read()
 	if err != nil {
 		log.Fatal(err)
 	}
-}
 
-func HandlerCreateTask(ctx *gin.Context) {
-	db, err := gorm.Open(sqlite.Open("D:\\to-do-list-test-task\\to-do-list.db"), &gorm.Config{})
+	e := gin.Default()
+	db, err := gorm.Open(postgres.Open(cfg.PostgresConfig.Dsn), &gorm.Config{})
 	if err != nil {
-		log.Error(err)
+		log.Fatal(err)
 	}
 
 	err = db.AutoMigrate(&dto.Task{})
 	if err != nil {
-		log.Error()
-	}
-
-	req := &dto.CreateTaskRequest{}
-
-	body, err := io.ReadAll(ctx.Request.Body)
-	if err != nil {
 		log.Error(err)
 	}
 
-	err = json.Unmarshal(body, req)
-	if err != nil {
-		log.Error(err)
-	}
+	opAdGroup := e.Group("/")
+	opAdGroup.POST("/tasks", api.CreateTaskHandler(db))
 
-	resp := &dto.CreateTaskResponse{
-		Id:          0,
-		Title:       req.Title,
-		Description: req.Description,
-		DueDate:     req.DueDate,
-		CreatedAt:   req.DueDate + "1",
-		UpdatedAt:   req.DueDate + "2",
+	err = e.Run(cfg.HttpConfig.Port)
+	if err != nil {
+		log.Fatal(err)
 	}
-	ctx.JSON(http.StatusOK, resp)
 }
