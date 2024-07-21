@@ -11,3 +11,7 @@ type GetTasksResponse struct {
 type GetTaskByIdResponse struct {
 	Task Task `json:"task"`
 }
+
+type UpdateTaskByIdResponse struct {
+	Task Task `json:"task"`
+}

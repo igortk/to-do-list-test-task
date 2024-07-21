@@ -8,14 +8,14 @@ import (
 	"to-do-list-test-task/dto"
 )
 
-const reqTaskId = "id"
+const ReqTaskId = "id"
 
 func GetTaskByIdHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var tsk dto.Task
 
 		status := http.StatusOK
-		id, _ := ctx.Params.Get(reqTaskId)
+		id, _ := ctx.Params.Get(ReqTaskId)
 
 		db.Find(&tsk, id)
 		if reflect.DeepEqual(tsk, dto.Task{}) {
