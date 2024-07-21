@@ -7,3 +7,7 @@ type CreateTaskResponse struct {
 type GetTasksResponse struct {
 	Task []Task `json:"tasks"`
 }
+
+type GetTaskByIdResponse struct {
+	Task Task `json:"task"`
+}

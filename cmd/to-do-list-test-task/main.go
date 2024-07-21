@@ -31,6 +31,7 @@ func main() {
 
 	opAdGroup.POST("/tasks", api.CreateTaskHandler(db))
 	opAdGroup.GET("/tasks", api.GetTasksHandler(db))
+	opAdGroup.GET("/tasks/:id", api.GetTaskByIdHandler(db))
 
 	err = e.Run(cfg.HttpConfig.Port)
 	if err != nil {
