@@ -2,22 +2,20 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	"net/http"
 	"reflect"
 	"to-do-list-test-task/dto"
+	"to-do-list-test-task/storage/postgre"
 )
 
 const ReqTaskId = "id"
 
-func GetTaskByIdHandler(db *gorm.DB) gin.HandlerFunc {
+func GetTaskByIdHandler(pClient *postgre.Client) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var tsk dto.Task
-
 		status := http.StatusOK
 		id, _ := ctx.Params.Get(ReqTaskId)
 
-		db.Find(&tsk, id)
+		tsk := pClient.GetTaskById(id)
 		if reflect.DeepEqual(tsk, dto.Task{}) {
 			status = http.StatusNotFound
 		}

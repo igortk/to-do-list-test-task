@@ -3,14 +3,13 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
-	"gorm.io/gorm"
 	"io"
 	"net/http"
-	"time"
 	"to-do-list-test-task/dto"
+	"to-do-list-test-task/storage/postgre"
 )
 
-func UpdateTaskByIdHandler(db *gorm.DB) gin.HandlerFunc {
+func UpdateTaskByIdHandler(pClient *postgre.Client) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var tsk dto.Task
 		req := &dto.UpdateTaskByIdRequest{}
@@ -21,13 +20,7 @@ func UpdateTaskByIdHandler(db *gorm.DB) gin.HandlerFunc {
 
 			id, _ := ctx.Params.Get(ReqTaskId)
 
-			db.Model(&dto.Task{}).Where("id = ?", id).
-				Update("title", req.Title).
-				Update("description", req.Description).
-				Update("due_date", req.DueDate).
-				Update("updated_at", time.Now().Format("2006-01-02 15:04:05"))
-
-			db.Find(&tsk, id)
+			tsk = pClient.UpdateTaskById(id, req)
 
 			status = http.StatusOK
 		}

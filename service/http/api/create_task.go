@@ -3,14 +3,14 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
-	"gorm.io/gorm"
 	"io"
 	"net/http"
 	"time"
 	"to-do-list-test-task/dto"
+	"to-do-list-test-task/storage/postgre"
 )
 
-func CreateTaskHandler(db *gorm.DB) gin.HandlerFunc {
+func CreateTaskHandler(pClient *postgre.Client) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		status := http.StatusOK
 
@@ -19,7 +19,7 @@ func CreateTaskHandler(db *gorm.DB) gin.HandlerFunc {
 			status = http.StatusBadRequest
 		}
 
-		db.Create(tsk)
+		pClient.InsertTask(tsk)
 		ctx.JSON(status, dto.CreateTaskResponse{Task: tsk})
 	}
 }

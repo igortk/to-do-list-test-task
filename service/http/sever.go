@@ -24,11 +24,11 @@ func (s *Server) initEngine() {
 	e := gin.Default()
 	opAdGroup := e.Group("/")
 
-	opAdGroup.POST("/tasks", api.CreateTaskHandler(s.pClient.DB))
-	opAdGroup.GET("/tasks", api.GetTasksHandler(s.pClient.DB))
-	opAdGroup.GET("/tasks/:id", api.GetTaskByIdHandler(s.pClient.DB))
-	opAdGroup.PUT("/tasks/:id", api.UpdateTaskByIdHandler(s.pClient.DB))
-	opAdGroup.DELETE("/tasks/:id", api.DeleteTaskByIdHandler(s.pClient.DB))
+	opAdGroup.POST("/tasks", api.CreateTaskHandler(s.pClient))
+	opAdGroup.GET("/tasks", api.GetTasksHandler(s.pClient))
+	opAdGroup.GET("/tasks/:id", api.GetTaskByIdHandler(s.pClient))
+	opAdGroup.PUT("/tasks/:id", api.UpdateTaskByIdHandler(s.pClient))
+	opAdGroup.DELETE("/tasks/:id", api.DeleteTaskByIdHandler(s.pClient))
 
 	s.e = e
 }
