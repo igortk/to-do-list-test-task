@@ -33,6 +33,7 @@ func main() {
 	opAdGroup.GET("/tasks", api.GetTasksHandler(db))
 	opAdGroup.GET("/tasks/:id", api.GetTaskByIdHandler(db))
 	opAdGroup.PUT("/tasks/:id", api.UpdateTaskByIdHandler(db))
+	opAdGroup.DELETE("/tasks/:id", api.DeleteTaskByIdHandler(db))
 
 	err = e.Run(cfg.HttpConfig.Port)
 	if err != nil {
