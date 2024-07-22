@@ -1,13 +1,10 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 	"to-do-list-test-task/config"
-	"to-do-list-test-task/dto"
-	"to-do-list-test-task/service/http/api"
+	"to-do-list-test-task/service/http"
+	"to-do-list-test-task/storage/postgre"
 )
 
 func main() {
@@ -16,26 +13,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	e := gin.Default()
-	db, err := gorm.Open(postgres.Open(cfg.PostgresConfig.Dsn), &gorm.Config{})
+	pClient, err := postgre.New(&cfg.PostgresConfig)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = db.AutoMigrate(&dto.Task{})
-	if err != nil {
-		log.Error(err)
-	}
-
-	opAdGroup := e.Group("/")
-
-	opAdGroup.POST("/tasks", api.CreateTaskHandler(db))
-	opAdGroup.GET("/tasks", api.GetTasksHandler(db))
-	opAdGroup.GET("/tasks/:id", api.GetTaskByIdHandler(db))
-	opAdGroup.PUT("/tasks/:id", api.UpdateTaskByIdHandler(db))
-	opAdGroup.DELETE("/tasks/:id", api.DeleteTaskByIdHandler(db))
-
-	err = e.Run(cfg.HttpConfig.Port)
+	svr := http.New(&cfg.HttpConfig, pClient)
+	err = svr.Run()
 	if err != nil {
 		log.Fatal(err)
 	}
